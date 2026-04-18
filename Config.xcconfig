@@ -1,0 +1,5 @@
+// Shared build settings for BottleScout.
+// Local secrets should be defined in Config.local.xcconfig.
+#include? "Config.local.xcconfig"
+
+GEMINI_API_KEY = AIzaSyAoKKmSjbinf1fRQZP4mbip_tlu-QZX39s

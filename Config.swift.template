@@ -1,0 +1,17 @@
+import Foundation
+
+struct Config {
+    // MARK: - API Configuration
+    // TODO: Replace with your Gemini API key
+    // Get your key from: https://aistudio.google.com/app/apikey
+    // Copy this file to Config.swift and add your real key
+    static let geminiAPIKey = "YOUR_GEMINI_API_KEY_HERE"
+
+    // Gemini Flash API endpoint
+    static let geminiAPIEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+
+    // MARK: - Image Processing Configuration
+    static let maxImageDimension: CGFloat = 800
+    static let apiImageQuality: CGFloat = 0.65
+    static let storageImageQuality: CGFloat = 0.80
+}

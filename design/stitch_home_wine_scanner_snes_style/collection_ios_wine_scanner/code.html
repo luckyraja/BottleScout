@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#e4e2e1",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#5f5985",
+                        "on-primary-fixed-variant": "#483a8b",
+                        "on-secondary-fixed": "#1b163d",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#1c025f",
+                        "background": "#f9f9f9",
+                        "secondary-fixed": "#e5deff",
+                        "outline-variant": "#c9c4d2",
+                        "tertiary": "#535353",
+                        "primary-fixed": "#e6deff",
+                        "error": "#ba1a1a",
+                        "surface": "#f9f9f9",
+                        "on-surface-variant": "#484551",
+                        "surface-container-low": "#f4f3f3",
+                        "on-background": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "surface-variant": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "secondary-container": "#d3ccfe",
+                        "primary": "#544699",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-surface": "#1a1c1c",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary-container": "#efedec",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-container": "#6d5fb3",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "secondary-fixed-dim": "#c8c1f3",
+                        "surface-container-high": "#e8e8e8",
+                        "inverse-surface": "#2f3131",
+                        "surface-tint": "#6052a5",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeeeee",
+                        "on-primary-container": "#f0eaff",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#5a5480",
+                        "tertiary-container": "#6c6b6b",
+                        "on-secondary-fixed-variant": "#47416b",
+                        "outline": "#797582",
+                        "primary-fixed-dim": "#cabeff",
+                        "inverse-primary": "#cabeff"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface">
+<!-- TopAppBar - Fixed Shell -->
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-[#f9f9f9]/80 dark:bg-[#1a1c1c]/80 backdrop-blur-xl">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#544699] dark:text-[#a599e7] active:scale-95 duration-200 cursor-pointer" data-icon="menu">menu</span>
+</div>
+<h1 class="font-manrope font-bold text-xl tracking-tight text-[#1a1c1c] dark:text-[#f9f9f9]">Collection</h1>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#544699] dark:text-[#a599e7] active:scale-95 duration-200 cursor-pointer" data-icon="search">search</span>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto">
+<!-- Search Bar -->
+<div class="mb-8">
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-sm" data-icon="search">search</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary/20 transition-all font-body text-sm" placeholder="Search your scans..." type="text"/>
+</div>
+</div>
+<!-- Segmented Control (Mode Toggle) -->
+<div class="mb-10 bg-surface-container-high p-1 rounded-xl flex items-center justify-between relative overflow-hidden">
+<button class="relative z-10 flex-1 py-2.5 text-xs font-bold tracking-widest text-primary uppercase bg-surface-container-lowest shadow-sm rounded-[0.85rem] transition-all">All</button>
+<button class="relative z-10 flex-1 py-2.5 text-xs font-bold tracking-widest text-secondary uppercase hover:text-primary transition-all">Wines</button>
+<button class="relative z-10 flex-1 py-2.5 text-xs font-bold tracking-widest text-secondary uppercase hover:text-primary transition-all">Spirits</button>
+<button class="relative z-10 flex-1 py-2.5 text-xs font-bold tracking-widest text-secondary uppercase hover:text-primary transition-all">Favorites</button>
+</div>
+<!-- Asymmetric Bento-style Grid -->
+<section class="grid grid-cols-2 gap-6">
+<!-- Item 1: Featured/Large -->
+<div class="col-span-2 bg-surface-container-lowest rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex gap-6 items-center">
+<div class="w-32 h-44 bg-surface-container-low rounded-md overflow-hidden flex-shrink-0">
+<img alt="Château Margaux 2015 Bottle" class="w-full h-full object-cover" data-alt="Elegant wine bottle with gold detailed label" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCil6fRhU0HfWAqGFOlD8HsH25TSVblAJw_FR7CUTabkDVNs_FzAlWf0sZrHwIivcrWE3pjjaqUJfjanP73mKrtO1q5eAA-MuK2NvSa1YFmsa-L69qgbIyDzgQO7yRFNQ89k4uLa1D0_iEFU65Otx6wNRTC_wRGTUayl1-voJaXm0NNkNgVKfr3iEptPzBzaC8m1_2sjfZVzRyelwIK45JfPGwMzTInsZTciX3gxkBKc7_9oq6vWsw4Q3z80hAJiQUxguqQCW6Igz4"/>
+</div>
+<div class="flex flex-col h-full justify-between py-2">
+<div>
+<span class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary mb-1 block">Recently Scanned</span>
+<h3 class="text-xl font-bold leading-tight text-on-surface">Château Margaux 2015</h3>
+<p class="text-sm text-on-surface-variant font-medium mt-1">Bordeaux, France</p>
+</div>
+<div class="mt-4 flex items-center gap-3">
+<div class="bg-primary/10 px-3 py-1 rounded-full flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-primary">4.9</span>
+</div>
+<span class="text-xs font-bold text-secondary">€1,200</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<div class="aspect-[3/4] bg-surface-container-low rounded-md mb-4 overflow-hidden">
+<img alt="The Macallan 18" class="w-full h-full object-cover" data-alt="Premium scotch whisky bottle in warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjtaHZgf_smZ5G-thk_pnb3u-9CSvPXCfslleJJTL9jtQQYNNtDbbbqOOoBF86Yu92cYWy3TGKrf08bIcH-QtWhZBZM8BBEz71ccVHzlxn8I3XQ0q41vyKWg7-aGRqZZyQVF4YhDsIhZXdMnLe_hbxaKebR3jLoiIwxwyZ3bUOqhgb9eVp6Z0eWo1noGW6VoZaI_WUv0NvoU16XZ5rtEgs9QeufyM8V5prbsBT_iipNIsUK1UtkfF70dg7pGoGnNxMG_rNLPLT4qA"/>
+</div>
+<h3 class="font-bold text-sm leading-tight text-on-surface">The Macallan 18 Years</h3>
+<div class="flex justify-between items-center mt-3">
+<span class="text-xs font-bold text-secondary">€350</span>
+<span class="material-symbols-outlined text-primary text-lg" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<div class="aspect-[3/4] bg-surface-container-low rounded-md mb-4 overflow-hidden">
+<img alt="Veuve Clicquot Brut" class="w-full h-full object-cover" data-alt="Champagne bottle with iconic yellow label" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARdFieWZN4O3dDiWS-RTa9g28RjXmeEyY5MM5IlALlQBmSaZXkJh_cZBc9OkVaCJPYKWpLH2p4VNBZMMLK0MM2PYwiAL4drrFQDMn-C7KpU4r5txzhGGwK-MVhHwpMRzF17IWl1yGE7sztUHIki0a82094Yk7ufwX3HPDFaHJJ1YVjMS66XMjdIEtxKkCnzGijUMgimJjMcPdRLPJJNk2GJqwQjqOtc1MAHR1giv6ajJju7euIWHfx2aBt4aMqZYwKNboUWFCXl1s"/>
+</div>
+<h3 class="font-bold text-sm leading-tight text-on-surface">Veuve Clicquot Ponsardin</h3>
+<div class="flex justify-between items-center mt-3">
+<span class="text-xs font-bold text-secondary">€55</span>
+<div class="bg-surface-container-high px-2 py-0.5 rounded flex items-center">
+<span class="text-[10px] font-bold text-on-surface-variant">92 PTS</span>
+</div>
+</div>
+</div>
+<!-- Item 4: Wide layout again to break the grid -->
+<div class="col-span-2 bg-secondary-fixed/30 rounded-lg p-5 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-surface-container-lowest rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="wine_bar">wine_bar</span>
+</div>
+<div>
+<h4 class="font-bold text-sm text-on-secondary-fixed">Discover New Vintages</h4>
+<p class="text-xs text-on-secondary-fixed-variant opacity-80">Explore personalized recommendations</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Item 5 -->
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<div class="aspect-[3/4] bg-surface-container-low rounded-md mb-4 overflow-hidden">
+<img alt="Penfolds Grange 2018" class="w-full h-full object-cover" data-alt="High-end red wine bottle with red wax seal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCR4R-K7uG5vRF1yZzpUS3aPeyXv7OgV7gwaY7u400m3W_89yxj-RjxC1N-Ojvhvcpc-9fpdLsVj3aa4G9HsrA5rUKm99Is3h-8NkBtx46e4ysP7aIHdwRpEUTDjDt_vnpEbN90rWcwl3qJjVqY0kWUPKcZou1TnwWpMj5z14aVO5HsP-YnSwpmY8i4Gxw_suBQUhXCKUGSTU95CZX5EmMwHGlA70bROmbX6leI3-COupCNHsgWyczJNXAJWu6aU93FMfG3TdLbIjE"/>
+</div>
+<h3 class="font-bold text-sm leading-tight text-on-surface">Penfolds Grange 2018</h3>
+<div class="flex justify-between items-center mt-3">
+<span class="text-xs font-bold text-secondary">€780</span>
+<span class="material-symbols-outlined text-outline-variant text-lg" data-icon="favorite">favorite</span>
+</div>
+</div>
+<!-- Item 6 -->
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<div class="aspect-[3/4] bg-surface-container-low rounded-md mb-4 overflow-hidden">
+<img alt="Grey Goose VX" class="w-full h-full object-cover" data-alt="Sleek premium vodka bottle clear glass" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjaLzZEb1QJ5QPo9kITuTqJVnzkYvUXirhDORk7WDAyz2C4poHgVpQF8eJSWfbaOqPcRcpiBQ4sw4d3WUGSllzmtCsQY3fIPncpnPn-kgbFwN6DJ9ffduGBIIW4ZZBS56QlOetV34-hCgoeppFlV6zPamAjkVFwGsNsygNugJWCRsb9V-uES9V1nTaAaQ2z9jMuJMVdqYt9w-wN74M25kjtOeQJ9XVl1EdS4k0biUQbmkgq7T8gA06jIcL9pb5j0SM_8guJKO1zms"/>
+</div>
+<h3 class="font-bold text-sm leading-tight text-on-surface">Grey Goose VX Vodka</h3>
+<div class="flex justify-between items-center mt-3">
+<span class="text-xs font-bold text-secondary">€110</span>
+<span class="material-symbols-outlined text-primary text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar - Fixed Shell -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-8 pb-8 pt-4 bg-[#f9f9f9]/90 dark:bg-[#1a1c1c]/90 backdrop-blur-2xl rounded-t-[2rem] shadow-[0_-4px_32px_rgba(26,28,28,0.06)]">
+<div class="flex flex-col items-center justify-center text-[#5f5985] dark:text-[#8b85b1] opacity-60 hover:text-[#544699] dark:hover:text-[#a599e7] transition-all cursor-pointer active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-manrope text-[10px] uppercase tracking-widest font-bold">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#544699] dark:text-[#a599e7] scale-110 cursor-pointer active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1" data-icon="wine_bar" style="font-variation-settings: 'FILL' 1;">wine_bar</span>
+<span class="font-manrope text-[10px] uppercase tracking-widest font-bold">Collection</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5f5985] dark:text-[#8b85b1] opacity-60 hover:text-[#544699] dark:hover:text-[#a599e7] transition-all cursor-pointer active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-manrope text-[10px] uppercase tracking-widest font-bold">Settings</span>
+</div>
+</nav>
+<!-- Contextual FAB for Scanning (Internal UI addition for functionality) -->
+<button class="fixed bottom-28 right-6 w-14 h-14 bg-gradient-to-b from-primary to-primary-container rounded-full flex items-center justify-center text-on-primary shadow-xl active:scale-95 transition-all">
+<span class="material-symbols-outlined text-2xl" data-icon="photo_camera">photo_camera</span>
+</button>
+</body></html>

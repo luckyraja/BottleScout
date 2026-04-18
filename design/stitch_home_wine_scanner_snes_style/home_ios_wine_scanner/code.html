@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-surface-variant": "#484551",
+                        "surface-container": "#eeeeee",
+                        "inverse-surface": "#2f3131",
+                        "primary-fixed-dim": "#cabeff",
+                        "surface-variant": "#e2e2e2",
+                        "on-secondary-fixed": "#1b163d",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#f0eaff",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#6c6b6b",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#47416b",
+                        "primary": "#544699",
+                        "on-secondary-container": "#5a5480",
+                        "inverse-primary": "#cabeff",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dadada",
+                        "outline": "#797582",
+                        "secondary-fixed-dim": "#c8c1f3",
+                        "on-primary-fixed": "#1c025f",
+                        "surface-bright": "#f9f9f9",
+                        "secondary-fixed": "#e5deff",
+                        "on-primary-fixed-variant": "#483a8b",
+                        "on-tertiary-container": "#efedec",
+                        "tertiary-fixed": "#e4e2e1",
+                        "on-background": "#1a1c1c",
+                        "primary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-container": "#d3ccfe",
+                        "surface-tint": "#6052a5",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c9c4d2",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "primary-container": "#6d5fb3",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container-low": "#f4f3f3",
+                        "secondary": "#5f5985",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-surface": "#1a1c1c",
+                        "inverse-on-surface": "#f1f1f1",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "background": "#f9f9f9",
+                        "tertiary": "#535353"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#f9f9f9]/80 dark:bg-[#1a1c1c]/80 backdrop-blur-xl shadow-[0_0_32px_0_rgba(26,28,28,0.06)] flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#544699] dark:text-[#a599e7] active:scale-95 transition-transform duration-200 cursor-pointer" data-icon="menu">menu</span>
+</div>
+<h1 class="font-['Manrope'] font-extrabold tracking-widest text-[#544699] dark:text-[#a599e7] text-lg">VINTAGE</h1>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/15 active:scale-95 transition-transform duration-200 cursor-pointer">
+<img alt="User profile" data-alt="Close up portrait of a smiling man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0HNG3tnmc7-zj8Z7s4TQKcmSXqa-3_0MuWVm6_bKLmNSCHcYvo9qnDHq8_vqK1Xf9hqMYNJew8IlNrMkNv7uN6SvPyfSRupmCGMVYx6QKdqh6n2sB54wgkDnEBW90akjhc7BrAKj5n1NlXzAM4rmxBvmHeDHbnwN6bpHHIip4dILYtMbZfLGHvGGFswQ_Z4EcNeOaNe0Ul6vhxlM79Ll9GzrDRW2qHBfpws0Zs2Rz3BklFr2vKiBd6j_uLe2g8LEyAc7fREDlOmA"/>
+</div>
+</nav>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto">
+<!-- Hero Section: Scan Bottle -->
+<section class="mb-12">
+<div class="relative group">
+<div class="absolute inset-0 bg-primary opacity-5 blur-3xl rounded-xl group-hover:opacity-10 transition-opacity"></div>
+<div class="relative bg-surface-container-lowest p-8 rounded-lg shadow-[0_0_32px_0_rgba(26,28,28,0.04)] text-center">
+<div class="w-20 h-20 bg-primary-container/10 rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="wine_bar">wine_bar</span>
+</div>
+<h2 class="font-headline font-bold text-3xl mb-2 tracking-tight">Discover your next favorite</h2>
+<p class="text-secondary text-sm mb-8 max-w-[240px] mx-auto leading-relaxed">Instant ratings, tasting notes, and food pairings with one scan.</p>
+<button class="w-full py-5 px-8 rounded-xl bg-gradient-to-b from-primary to-primary-container text-on-primary font-headline font-bold text-lg flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined" data-icon="photo_camera">photo_camera</span>
+                        Scan Bottle
+                    </button>
+</div>
+</div>
+</section>
+<!-- Stats Bento Grid (Asymmetric) -->
+<section class="mb-12">
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-5 rounded-lg flex flex-col justify-between aspect-square">
+<span class="material-symbols-outlined text-primary" data-icon="stars">stars</span>
+<div>
+<p class="font-headline font-extrabold text-3xl text-primary leading-none mb-1">12</p>
+<p class="text-[10px] uppercase tracking-widest font-semibold text-secondary">Favorites</p>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-surface-container-high p-5 rounded-lg flex-1 flex items-center gap-4">
+<div class="p-2 bg-surface-container-lowest rounded-md">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="history">history</span>
+</div>
+<div>
+<p class="font-headline font-bold text-xl leading-none">48</p>
+<p class="text-[9px] uppercase tracking-widest text-secondary">Scanned</p>
+</div>
+</div>
+<div class="bg-primary/5 p-5 rounded-lg flex-1 flex items-center gap-4">
+<div class="p-2 bg-primary rounded-md">
+<span class="material-symbols-outlined text-on-primary text-sm" data-icon="inventory_2">inventory_2</span>
+</div>
+<div>
+<p class="font-headline font-bold text-xl leading-none">Cellar</p>
+<p class="text-[9px] uppercase tracking-widest text-secondary">Premium</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Scans Section -->
+<section>
+<div class="flex justify-between items-end mb-6">
+<h3 class="font-headline font-bold text-xl tracking-tight">Recent Scans</h3>
+<button class="text-primary font-semibold text-sm hover:underline underline-offset-4">View All</button>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar -mx-6 px-6 pb-4">
+<!-- Card 1 -->
+<div class="flex-shrink-0 w-44 group cursor-pointer">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-surface-container-high mb-3 active:scale-95 transition-transform duration-200">
+<img alt="Red Wine Bottle" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Elegant bottle of red wine on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAi2jxeA9aIsDkxyF5laU-v8i1mFDk983jvo_7cfFuYXk4qVl6Dug1jczj_fLu237Koj1Bu3gDEMVMQf-F9yvAPajK_1gDtOzIR5LaE_KPmjJr7lKY__wvCdjJJckYFDFryKttFM6vfRdC3DCgGsbmicSvAu1eB_dH15RCO_83335Oy5BqKjIpZKt-k3Y-iiNnNHcn4ItK9AN-IkqpdaJilotQ7QT2WbUxAgCX2PL9MUEt1cj5N1wJdfdzRt1cH7l-DML-DAnBDBhg"/>
+<div class="absolute top-3 right-3 bg-surface/90 backdrop-blur-md px-2 py-1 rounded-full text-[10px] font-bold text-primary">4.8 ★</div>
+</div>
+<h4 class="font-headline font-bold text-sm truncate">Château Margaux</h4>
+<p class="text-secondary text-[11px]">2015 · Bordeaux</p>
+</div>
+<!-- Card 2 -->
+<div class="flex-shrink-0 w-44 group cursor-pointer">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-surface-container-high mb-3 active:scale-95 transition-transform duration-200">
+<img alt="White Wine Bottle" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Crisp bottle of white wine with water droplets" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7l7-AAPBI-k1YyeagnqunlULbK5bn13eUWIvuzF7HIzOpuaYzjqmX88qeVRcVtv1Pp2X6yo6OwYlacTK8oQxMoQgsSfzmoDnPwx848uQBOM7x6ZBU-HUcctO_8Ehl9f0abPOc7vqpX2-q6iPOpRzoPo9Lt5hf4RwmEvcwtK-erynMPhHUKJfqAwYnOJ9Qj0i8YsJP4zOUTYftk8J8gbKgxFyeCMhltOCEMfVGQGAKu66NI4r1qWR2N4-66ONqxE0EfBeEwBoh-Iw"/>
+<div class="absolute top-3 right-3 bg-surface/90 backdrop-blur-md px-2 py-1 rounded-full text-[10px] font-bold text-primary">4.2 ★</div>
+</div>
+<h4 class="font-headline font-bold text-sm truncate">Cloudy Bay</h4>
+<p class="text-secondary text-[11px]">2021 · Marlborough</p>
+</div>
+<!-- Card 3 -->
+<div class="flex-shrink-0 w-44 group cursor-pointer">
+<div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-surface-container-high mb-3 active:scale-95 transition-transform duration-200">
+<img alt="Rose Wine Bottle" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Bottle of rose wine with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAl-56xWrD7CgBYMQ0hxTGwXkau93Da14MdymW2kV34p9Iu7-qV5fPoWiYqO6apbTq9PjqOSChjus7ieguuwCh8lS0s1zzf1Pcy56qSaj5agdz3bXRCmmn_Tf61bRPs_F-rZjXtjgTC-dVkq-pm-fWXciV_ysVpi-YIe75cY-2SJ46cCYAk3ftghzwNTCtWYs72kJ2B9tmuUPa1qB8i7wXiS2xkTEB428OIuQcJqO1su19sW_7dty6nxR-kl_DFhGEfa0kpbENlkHI"/>
+<div class="absolute top-3 right-3 bg-surface/90 backdrop-blur-md px-2 py-1 rounded-full text-[10px] font-bold text-primary">4.5 ★</div>
+</div>
+<h4 class="font-headline font-bold text-sm truncate">Miraval Provence</h4>
+<p class="text-secondary text-[11px]">2022 · France</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-[#f9f9f9]/90 dark:bg-[#1a1c1c]/90 backdrop-blur-xl z-50 rounded-t-[2rem] shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
+<a class="flex flex-col items-center justify-center bg-[#f4f3f3] dark:bg-[#5f5985]/20 text-[#544699] dark:text-[#a599e7] rounded-full px-6 py-2 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Manrope'] font-medium text-[10px] uppercase tracking-[0.05em]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5f5985] dark:text-[#e2e2e2] opacity-60 hover:bg-[#e2e2e2] dark:hover:bg-white/10 transition-colors active:scale-90 transition-transform duration-200 p-2 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="shelves">shelves</span>
+<span class="font-['Manrope'] font-medium text-[10px] uppercase tracking-[0.05em]">Collection</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5f5985] dark:text-[#e2e2e2] opacity-60 hover:bg-[#e2e2e2] dark:hover:bg-white/10 transition-colors active:scale-90 transition-transform duration-200 p-2 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Manrope'] font-medium text-[10px] uppercase tracking-[0.05em]">Settings</span>
+</a>
+</nav>
+</body></html>
