@@ -32,6 +32,9 @@ struct ContentView: View {
             )
             .navigationTitle("BottleScout")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.black, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -83,104 +86,113 @@ private struct CameraHomeView: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.black.opacity(0.04))
-                .overlay {
-                    Group {
-                        if camera.authorizationDenied {
-                            cameraPermissionView
-                        } else if let setupError = camera.setupError {
-                            cameraErrorView(setupError)
-                        } else {
-                            LiveCameraPreview(session: camera.session)
-                                .overlay(alignment: .center) {
-                                    RoundedRectangle(cornerRadius: 22)
-                                        .stroke(Color.white.opacity(0.7), lineWidth: 3)
-                                        .frame(width: 180, height: 240)
-                                }
-                                .overlay(alignment: .bottom) {
-                                    Text("Capture a bottle label to start")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                        .padding(.bottom, 28)
-                                        .shadow(radius: 8)
-                                }
-                        }
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 96)
+            Color.black.ignoresSafeArea()
+
+            cameraLayer
+                .ignoresSafeArea(edges: .bottom)
 
             VStack {
                 Spacer()
-                HStack {
-                    Button(action: onOpenPhotos) {
-                        Image(systemName: "photo.on.rectangle")
-                            .font(.title2)
-                            .frame(width: 52, height: 52)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 2)
-                    }
-
-                    Spacer()
-
-                    Button(action: onOpenCamera) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.accentColor)
-                                .frame(width: 74, height: 74)
-                            Image(systemName: "camera.fill")
-                                .font(.title2)
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .accessibilityLabel("Capture Bottle")
-
-                    Spacer()
-
-                    Button(action: onOpenInventory) {
-                        Image(systemName: "list.bullet.rectangle")
-                            .font(.title2)
-                            .frame(width: 52, height: 52)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 2)
-                    }
-                }
-                .padding(.horizontal, 26)
-                .padding(.bottom, 24)
+                actionBar
             }
         }
     }
 
-    private var cameraPermissionView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "camera.viewfinder")
-                .font(.system(size: 58))
-                .foregroundStyle(.secondary)
-            Text("Enable camera access in Settings to scan bottles.")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 28)
+    @ViewBuilder
+    private var cameraLayer: some View {
+        if camera.authorizationDenied {
+            cameraMessage(
+                systemImage: "camera.viewfinder",
+                title: "Camera Access Needed",
+                message: "Enable camera access in Settings to scan bottles."
+            )
+        } else if let setupError = camera.setupError {
+            cameraMessage(
+                systemImage: "exclamationmark.triangle",
+                title: "Camera Unavailable",
+                message: setupError
+            )
+        } else {
+            LiveCameraPreview(session: camera.session)
+                .overlay(alignment: .center) {
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(Color.white.opacity(0.75), lineWidth: 2)
+                        .frame(width: 220, height: 300)
+                        .shadow(color: .black.opacity(0.35), radius: 10)
+                }
+                .overlay(alignment: .top) {
+                    Text("Align the label inside the frame")
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .environment(\.colorScheme, .dark)
+                        .padding(.top, 12)
+                }
         }
-        .background(Color.gray.opacity(0.12))
     }
 
-    private func cameraErrorView(_ message: String) -> some View {
-        VStack(spacing: 12) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
-            Text(message)
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 28)
+    private var actionBar: some View {
+        HStack(spacing: 32) {
+            circularButton(systemImage: "photo.on.rectangle", label: "Photos", action: onOpenPhotos)
+
+            Button(action: onOpenCamera) {
+                ZStack {
+                    Circle()
+                        .strokeBorder(Color.white.opacity(0.9), lineWidth: 4)
+                        .frame(width: 80, height: 80)
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 66, height: 66)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Capture Bottle")
+
+            circularButton(systemImage: "list.bullet.rectangle", label: "Inventory", action: onOpenInventory)
         }
-        .background(Color.gray.opacity(0.12))
+        .padding(.horizontal, 32)
+        .padding(.vertical, 20)
+        .frame(maxWidth: .infinity)
+        .background(
+            LinearGradient(
+                colors: [.black.opacity(0), .black.opacity(0.75)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea(edges: .bottom)
+        )
+    }
+
+    private func circularButton(systemImage: String, label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.title3)
+                .foregroundStyle(.white)
+                .frame(width: 50, height: 50)
+                .background(Color.white.opacity(0.18), in: Circle())
+                .overlay(Circle().stroke(Color.white.opacity(0.25), lineWidth: 0.5))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+
+    private func cameraMessage(systemImage: String, title: String, message: String) -> some View {
+        VStack(spacing: 14) {
+            Image(systemName: systemImage)
+                .font(.system(size: 52))
+                .foregroundStyle(.white.opacity(0.7))
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(.white)
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

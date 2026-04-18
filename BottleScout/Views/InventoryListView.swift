@@ -9,6 +9,10 @@ struct InventoryListView: View {
         bottles.filter(\.inCollection)
     }
 
+    private var scannedBottles: [BottleEntry] {
+        bottles.filter { !$0.inCollection }
+    }
+
     var body: some View {
         Group {
             if bottles.isEmpty {
@@ -18,71 +22,56 @@ struct InventoryListView: View {
             }
         }
         .navigationTitle("Inventory")
-        .background(Color.surface.ignoresSafeArea())
     }
 
     private var emptyStateView: some View {
-        VStack(spacing: 32) {
-            Image(systemName: "wineglass")
-                .font(.system(size: 70))
-                .foregroundStyle(.secondary)
-
-            Text("No Bottles")
-                .font(.title)
-                .fontWeight(.bold)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-
-            Text("Scan bottles from the main camera screen and they will show up here in history.")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
+        ContentUnavailableView {
+            Label("No Bottles Yet", systemImage: "wineglass")
+        } description: {
+            Text("Scan a bottle from the camera to add it to your history.")
         }
-        .padding(.vertical, 40)
     }
 
     private var bottleList: some View {
         List {
             if !ownedBottles.isEmpty {
-                Section("Owned") {
+                Section("Collection") {
                     ForEach(ownedBottles) { bottle in
                         NavigationLink(destination: BottleDetailView(bottle: bottle)) {
                             BottleRowView(bottle: bottle)
-                                .listRowBackground(Color.clear)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal)
                         }
                     }
-                }
-            }
-
-            Section("History") {
-                ForEach(bottles) { bottle in
-                    NavigationLink(destination: BottleDetailView(bottle: bottle)) {
-                        BottleRowView(bottle: bottle)
-                            .listRowBackground(Color.clear)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal)
+                    .onDelete { offsets in
+                        delete(from: ownedBottles, at: offsets)
                     }
                 }
-                .onDelete(perform: deleteHistoryBottles)
+            }
+
+            if !scannedBottles.isEmpty {
+                Section("Scanned") {
+                    ForEach(scannedBottles) { bottle in
+                        NavigationLink(destination: BottleDetailView(bottle: bottle)) {
+                            BottleRowView(bottle: bottle)
+                        }
+                    }
+                    .onDelete { offsets in
+                        delete(from: scannedBottles, at: offsets)
+                    }
+                }
             }
         }
-        .listStyle(.plain)
-        .background(Color.surface)
+        .listStyle(.insetGrouped)
     }
 
-    private func deleteHistoryBottles(at offsets: IndexSet) {
+    private func delete(from source: [BottleEntry], at offsets: IndexSet) {
         for index in offsets {
-            modelContext.delete(bottles[index])
+            modelContext.delete(source[index])
         }
 
         do {
             try modelContext.save()
         } catch {
-            assertionFailure("Failed to delete history bottle: \(error.localizedDescription)")
+            assertionFailure("Failed to delete bottle: \(error.localizedDescription)")
         }
     }
 }
@@ -91,48 +80,48 @@ struct BottleRowView: View {
     let bottle: BottleEntry
 
     var body: some View {
-        HStack(spacing: 16) {
-            if let imageData = bottle.imageData,
-               let uiImage = UIImage(data: imageData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 72, height: 72)
-                    .clipShape(RoundedRectangle(cornerRadius: 24))
-            } else {
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.surfaceContainerLow)
-                    .frame(width: 72, height: 72)
-                    .overlay {
-                        Image(systemName: "wineglass")
-                            .foregroundStyle(.secondary)
-                            .font(.title2)
-                    }
-            }
+        HStack(spacing: 14) {
+            thumbnail
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(bottle.name)
-                    .font(.title3.bold())
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.body.weight(.semibold))
+                    .lineLimit(2)
 
                 Text(bottle.alcoholType.capitalized)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
-                Text(bottle.priceRange)
-                    .font(.caption)
-                    .foregroundColor(.blue)
+                if !bottle.priceRange.isEmpty {
+                    Text(bottle.priceRange)
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
             }
 
-            Spacer()
-
-            Image(systemName: bottle.inCollection ? "checkmark.circle.fill" : "circle")
-                .font(.title2)
-                .foregroundStyle(bottle.inCollection ? .green : .secondary)
+            Spacer(minLength: 0)
         }
-        .padding(20)
-        .background(Color.surfaceContainerLow)
-        .cornerRadius(32)
+        .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private var thumbnail: some View {
+        if let imageData = bottle.imageData,
+           let uiImage = UIImage(data: imageData) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 56, height: 56)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        } else {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.surfaceContainerHigh)
+                .frame(width: 56, height: 56)
+                .overlay {
+                    Image(systemName: "wineglass")
+                        .foregroundStyle(.secondary)
+                }
+        }
     }
 }
 

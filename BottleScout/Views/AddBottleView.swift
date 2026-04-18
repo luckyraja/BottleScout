@@ -29,7 +29,7 @@ struct AddBottleView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 40) {
+            VStack(spacing: 24) {
                 if let image = capturedImage {
                     imagePreview(image)
                 } else {
@@ -44,28 +44,15 @@ struct AddBottleView: View {
                     errorStateView(message: errorMessage)
                 }
             }
-            .padding(32)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
         .background(Color.surface.ignoresSafeArea())
         .navigationTitle("Bottle Review")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
+        .safeAreaInset(edge: .bottom) {
             if analysisResult != nil && !isAnalyzing {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        markBottleOwned()
-                    } label: {
-                        Text("Owned")
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .foregroundColor(.white)
-                            .background(LinearGradient.primaryButtonGradient)
-                            .cornerRadius(32)
-                    }
-                    .buttonStyle(.plain)
-                    .frame(width: 100)
-                }
+                ownedCTA
             }
         }
         .sheet(isPresented: $showingImagePicker) {
@@ -110,51 +97,32 @@ struct AddBottleView: View {
     // MARK: - Placeholder View
 
     private var imagePlaceholder: some View {
-        VStack(spacing: 32) {
-            RoundedRectangle(cornerRadius: 32)
+        VStack(spacing: 20) {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(Color.surfaceContainerLow)
-                .frame(height: 250)
+                .frame(height: 260)
                 .overlay {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 12) {
                         Image(systemName: "camera")
-                            .font(.system(size: 50))
-                            .foregroundColor(.secondaryText)
+                            .font(.system(size: 42))
+                            .foregroundStyle(.secondary)
                         Text("Take a photo of the bottle label")
-                            .font(.title3.bold())
-                            .foregroundColor(.secondaryText)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                     }
-                    .padding(32)
+                    .padding(24)
                 }
 
-            HStack(spacing: 16) {
-                Button {
+            HStack(spacing: 12) {
+                primaryActionButton(title: "Take Photo", systemImage: "camera") {
                     imageSource = .camera
                     showingImagePicker = true
-                } label: {
-                    Label("Take Photo", systemImage: "camera")
-                        .font(.headline.weight(.bold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .foregroundColor(.white)
-                        .background(LinearGradient.primaryButtonGradient)
-                        .cornerRadius(32)
                 }
-                .buttonStyle(.plain)
-
-                Button {
+                secondaryActionButton(title: "Choose Photo", systemImage: "photo.on.rectangle") {
                     imageSource = .photoLibrary
                     showingImagePicker = true
-                } label: {
-                    Label("Choose Photo", systemImage: "photo.on.rectangle")
-                        .font(.headline.weight(.bold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .foregroundColor(.primaryColor)
-                        .background(Color.surfaceContainerHigh)
-                        .cornerRadius(32)
                 }
-                .buttonStyle(.plain)
             }
         }
     }
@@ -162,173 +130,193 @@ struct AddBottleView: View {
     // MARK: - Image Preview View
 
     private func imagePreview(_ image: UIImage) -> some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 12) {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
-                .frame(height: 280)
-                .clipShape(RoundedRectangle(cornerRadius: 32))
-                .background(Color.surfaceContainerLow.cornerRadius(32))
+                .frame(height: 260)
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
-            HStack(spacing: 16) {
-                Button {
+            HStack(spacing: 12) {
+                secondaryActionButton(title: "Retake", systemImage: "camera") {
                     imageSource = .camera
                     showingImagePicker = true
-                } label: {
-                    Label("Retake", systemImage: "camera")
-                        .font(.headline.weight(.bold))
-                        .foregroundColor(.primaryColor)
-                        .frame(height: 44)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.surfaceContainerHigh.cornerRadius(32))
                 }
-                .buttonStyle(.plain)
-
-                Button {
+                secondaryActionButton(title: "Replace", systemImage: "photo") {
                     imageSource = .photoLibrary
                     showingImagePicker = true
-                } label: {
-                    Label("Use Photo", systemImage: "photo")
-                        .font(.headline.weight(.bold))
-                        .foregroundColor(.primaryColor)
-                        .frame(height: 44)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.surfaceContainerHigh.cornerRadius(32))
                 }
-                .buttonStyle(.plain)
             }
         }
-        .padding(24)
-        .background(Color.surfaceContainerLow.cornerRadius(32))
     }
 
     // MARK: - Analyzing View
 
     private var analyzingView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 12) {
             ProgressView()
-                .scaleEffect(1.5)
-
-            Text("Analyzing bottle...")
-                .font(.title3.bold())
-                .foregroundColor(.secondaryText)
+                .scaleEffect(1.2)
+            Text("Analyzing bottle…")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 56)
-        .background(Color.surfaceContainerLow.cornerRadius(32))
+        .padding(.vertical, 40)
     }
 
+    // MARK: - Error State
+
     private func errorStateView(message: String) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 14) {
             Label("Analysis Failed", systemImage: "exclamationmark.triangle.fill")
-                .font(.title3.bold())
-                .foregroundColor(.red)
+                .font(.headline)
+                .foregroundStyle(.red)
 
             Text(message)
-                .font(.body)
-                .foregroundColor(.primaryText)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            HStack(spacing: 16) {
-                Button {
+            HStack(spacing: 12) {
+                secondaryActionButton(title: "Settings", systemImage: "gearshape") {
                     showingSettings = true
-                } label: {
-                    Label("Gemini Settings", systemImage: "gearshape")
-                        .font(.headline.weight(.bold))
-                        .foregroundColor(.primaryColor)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.surfaceContainerHigh)
-                        .cornerRadius(32)
                 }
-                .buttonStyle(.plain)
-
-                Button {
+                primaryActionButton(title: "Try Again", systemImage: "arrow.clockwise") {
                     analyzeImage()
-                } label: {
-                    Label("Try Again", systemImage: "arrow.clockwise")
-                        .font(.headline.weight(.bold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(LinearGradient.primaryButtonGradient)
-                        .cornerRadius(32)
                 }
-                .buttonStyle(.plain)
                 .disabled(isAnalyzing || capturedImage == nil)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(32)
-        .background(Color.surfaceContainerLow.cornerRadius(32))
+        .padding(20)
+        .background(Color.surfaceContainerLow)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     // MARK: - Analysis Result View
 
     private func analysisResultView(_ result: BottleAnalysisResult) -> some View {
-        VStack(alignment: .leading, spacing: 32) {
-            Text("ANALYSIS COMPLETE")
-                .font(.largeTitle.bold())
-                .foregroundColor(.primaryText)
-                .textCase(.uppercase)
-                .padding(.bottom, 8)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(result.name)
+                    .font(.title2.bold())
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(result.alcoholType.capitalized)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 4)
 
-            VStack(alignment: .leading, spacing: 24) {
-                ResultField(label: "NAME", value: result.name)
-                ResultField(label: "TYPE", value: result.alcoholType.capitalized)
-                ResultField(label: "PRICE RANGE", value: result.priceRange)
+            VStack(spacing: 12) {
+                resultRow(label: "Price Range", value: result.priceRange)
+                resultBlock(label: "Tasting Notes", text: result.tastingNotes)
+                resultBlock(label: "Pairing Notes", text: result.pairingNotes)
+            }
 
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("TASTING NOTES")
-                        .font(.title3.bold())
-                        .foregroundColor(.secondaryText)
-                        .textCase(.uppercase)
-                        .padding(.bottom, 4)
-                    Text(result.tastingNotes)
-                        .font(.body)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("PAIRING NOTES")
-                        .font(.title3.bold())
-                        .foregroundColor(.secondaryText)
-                        .textCase(.uppercase)
-                        .padding(.bottom, 4)
-                    Text(result.pairingNotes)
-                        .font(.body)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
+            VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text("CONFIDENCE")
-                        .font(.caption.bold())
-                        .foregroundColor(.secondaryText)
-                        .textCase(.uppercase)
+                    Text("Confidence")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
                     Spacer()
                     Text(result.confidenceNote)
                         .font(.caption)
-                        .foregroundColor(.secondaryText)
+                        .foregroundStyle(.secondary)
                 }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("SOURCE")
-                        .font(.caption.bold())
-                        .foregroundColor(.secondaryText)
-                        .textCase(.uppercase)
-                    Text(result.sourceNote)
-                        .font(.footnote)
-                        .foregroundColor(.secondaryText)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                Text(result.sourceNote)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(32)
-            .background(Color.surfaceContainerHigh.cornerRadius(32))
+            .padding(.horizontal, 4)
+            .padding(.top, 4)
         }
-        .padding(24)
-        .background(Color.surfaceContainerLow.cornerRadius(32))
+    }
+
+    private func resultRow(label: String, value: String) -> some View {
+        HStack {
+            Text(label)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Text(value)
+                .font(.subheadline.weight(.medium))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color.surfaceContainerLow)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private func resultBlock(label: String, text: String) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+            Text(text)
+                .font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color.surfaceContainerLow)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    // MARK: - Shared Button Styles
+
+    private func primaryActionButton(title: String, systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 46)
+                .background(LinearGradient.primaryButtonGradient)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func secondaryActionButton(title: String, systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(.primaryColor)
+                .frame(maxWidth: .infinity)
+                .frame(height: 46)
+                .background(Color.surfaceContainerHigh)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Owned CTA
+
+    private var ownedCTA: some View {
+        let alreadyOwned = persistedBottle?.inCollection == true
+
+        return Button {
+            markBottleOwned()
+        } label: {
+            Label(alreadyOwned ? "In Your Collection" : "Add to Collection",
+                  systemImage: alreadyOwned ? "checkmark.circle.fill" : "plus.circle.fill")
+                .font(.headline.weight(.semibold))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 52)
+                .background(LinearGradient.primaryButtonGradient)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .disabled(alreadyOwned)
+        .opacity(alreadyOwned ? 0.7 : 1)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(.ultraThinMaterial)
     }
 
     // MARK: - Analyze Image
@@ -427,26 +415,6 @@ struct AddBottleView: View {
         } catch {
             errorMessage = "Unable to mark this bottle as owned: \(error.localizedDescription)"
             showingError = true
-        }
-    }
-}
-
-// MARK: - ResultField View
-
-struct ResultField: View {
-    let label: String
-    let value: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(.caption2.bold())
-                .foregroundColor(.secondaryText)
-                .textCase(.uppercase)
-                .tracking(1.2)
-            Text(value)
-                .font(.body)
-                .foregroundColor(.primaryText)
         }
     }
 }
