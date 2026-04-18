@@ -5,6 +5,7 @@ struct ContentView: View {
     @StateObject private var liveCamera = LiveCameraModel()
     @State private var selectedImage: UIImage?
     @State private var showingImagePicker = false
+    @State private var showingSettings = false
     @State private var imageSource: ImageSource = .camera
     @State private var showInventory = false
     @State private var showBottleReview = false
@@ -16,7 +17,9 @@ struct ContentView: View {
                 onOpenCamera: {
                     imageSource = .camera
                     liveCamera.capturePhoto { image in
-                        selectedImage = image
+                        Task { @MainActor in
+                            selectedImage = image
+                        }
                     }
                 },
                 onOpenPhotos: {
@@ -29,6 +32,15 @@ struct ContentView: View {
             )
             .navigationTitle("BottleScout")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
+            }
             .navigationDestination(isPresented: $showInventory) {
                 InventoryListView()
             }
@@ -43,6 +55,9 @@ struct ContentView: View {
                 } else {
                     ImagePickerView(image: $selectedImage)
                 }
+            }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
             }
             .onChange(of: selectedImage) { _, newValue in
                 if newValue != nil {

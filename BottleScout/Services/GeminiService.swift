@@ -10,7 +10,7 @@ enum GeminiError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidAPIKey:
-            return "Missing Gemini API key. Add GEMINI_API_KEY in Config.local.xcconfig."
+            return "Missing Gemini API key. Add it in Settings before analyzing a bottle."
         case .invalidImage:
             return "Unable to process the image."
         case .networkError(let error):
@@ -48,7 +48,7 @@ struct GeminiService {
         guard !trimmedKey.isEmpty,
               trimmedKey != "YOUR_GEMINI_API_KEY_HERE",
               !trimmedKey.contains("$(GEMINI_API_KEY)") else {
-            return fallbackResult()
+            throw GeminiError.invalidAPIKey
         }
 
         guard let imageData = ImageProcessor.prepareForAPI(image) else {
@@ -66,25 +66,10 @@ struct GeminiService {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let prompt = """
-        Analyze this bottle label image and return STRICT JSON only (no markdown, no prose).
-
-        Use best-effort market/tasting knowledge. If grounded web facts are not available, provide practical estimates and say so in sourceNote.
-
-        JSON schema:
-        {
-          "name": "string",
-          "type": "wine|beer|spirits|other",
-          "priceRange": "string",
-          "tastingNotes": "string",
-          "pairingNotes": "string",
-          "confidenceNote": "high|medium|low",
-          "sourceNote": "string"
-        }
-
-        Field requirements:
-        - Every field must be non-empty.
-        - priceRange should be a concise consumer range like "$18-$25" when possible.
-        - tastingNotes and pairingNotes should be useful and concise.
+        Identify the bottle from this label image and return strict JSON only.
+        Required fields:
+        {"name":"string","type":"wine|beer|spirits|other","priceRange":"string","tastingNotes":"string","pairingNotes":"string","confidenceNote":"high|medium|low","sourceNote":"string"}
+        Keep every field non-empty. Use concise tasting and pairing notes. Use a short consumer price range like "$18-$25" when possible. If estimating, say so in sourceNote.
         """
 
         let requestBody: [String: Any] = [
@@ -141,19 +126,6 @@ struct GeminiService {
         }
 
         return parseAnalysisResult(from: text)
-    }
-
-    private func fallbackResult() -> BottleAnalysisResult {
-        BottleAnalysisResult(
-            name: "Unidentified Bottle",
-            alcoholType: "wine",
-            tastingNotes: "Tasting notes unavailable until a Gemini API key is configured.",
-            pairingNotes: "Pairing suggestions unavailable until a Gemini API key is configured.",
-            priceRange: "Unknown",
-            confidenceNote: "low",
-            sourceNote: "Generated local fallback because GEMINI_API_KEY is not configured.",
-            rawResponse: ""
-        )
     }
 
     private func parseAnalysisResult(from text: String) -> BottleAnalysisResult {

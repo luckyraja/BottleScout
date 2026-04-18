@@ -19,8 +19,8 @@ struct AddBottleView: View {
     @State private var analysisResult: BottleAnalysisResult?
     @State private var errorMessage: String?
     @State private var showingError = false
-
-    private let geminiService = GeminiService()
+    @State private var showingSettings = false
+    @State private var persistedBottle: BottleEntry?
 
     init(initialImage: UIImage? = nil, initialImageSource: ImageSource = .camera) {
         _capturedImage = State(initialValue: initialImage)
@@ -40,6 +40,8 @@ struct AddBottleView: View {
                     analyzingView
                 } else if let result = analysisResult {
                     analysisResultView(result)
+                } else if let errorMessage {
+                    errorStateView(message: errorMessage)
                 }
             }
             .padding(32)
@@ -51,9 +53,9 @@ struct AddBottleView: View {
             if analysisResult != nil && !isAnalyzing {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        saveBottle()
+                        markBottleOwned()
                     } label: {
-                        Text("Save")
+                        Text("Owned")
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
@@ -76,6 +78,9 @@ struct AddBottleView: View {
             }
             .background(.ultraThinMaterial)
         }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
+        }
         .alert("Error", isPresented: $showingError) {
             Button("OK") {
                 errorMessage = nil
@@ -86,9 +91,14 @@ struct AddBottleView: View {
             }
         }
         .onChange(of: capturedImage) { _, newValue in
+            persistedBottle = nil
             if newValue != nil {
                 analyzeImage()
             }
+        }
+        .onChange(of: showingSettings) { _, isPresented in
+            guard !isPresented, capturedImage != nil, analysisResult == nil else { return }
+            analyzeImage()
         }
         .task {
             if capturedImage != nil && analysisResult == nil && !isAnalyzing {
@@ -209,6 +219,51 @@ struct AddBottleView: View {
         .background(Color.surfaceContainerLow.cornerRadius(32))
     }
 
+    private func errorStateView(message: String) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Label("Analysis Failed", systemImage: "exclamationmark.triangle.fill")
+                .font(.title3.bold())
+                .foregroundColor(.red)
+
+            Text(message)
+                .font(.body)
+                .foregroundColor(.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 16) {
+                Button {
+                    showingSettings = true
+                } label: {
+                    Label("Gemini Settings", systemImage: "gearshape")
+                        .font(.headline.weight(.bold))
+                        .foregroundColor(.primaryColor)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                        .background(Color.surfaceContainerHigh)
+                        .cornerRadius(32)
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    analyzeImage()
+                } label: {
+                    Label("Try Again", systemImage: "arrow.clockwise")
+                        .font(.headline.weight(.bold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                        .background(LinearGradient.primaryButtonGradient)
+                        .cornerRadius(32)
+                }
+                .buttonStyle(.plain)
+                .disabled(isAnalyzing || capturedImage == nil)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(32)
+        .background(Color.surfaceContainerLow.cornerRadius(32))
+    }
+
     // MARK: - Analysis Result View
 
     private func analysisResultView(_ result: BottleAnalysisResult) -> some View {
@@ -257,6 +312,17 @@ struct AddBottleView: View {
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("SOURCE")
+                        .font(.caption.bold())
+                        .foregroundColor(.secondaryText)
+                        .textCase(.uppercase)
+                    Text(result.sourceNote)
+                        .font(.footnote)
+                        .foregroundColor(.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
             .padding(32)
             .background(Color.surfaceContainerHigh.cornerRadius(32))
@@ -272,46 +338,96 @@ struct AddBottleView: View {
 
         isAnalyzing = true
         errorMessage = nil
+        analysisResult = nil
 
         Task {
             do {
-                let result = try await geminiService.analyzeBottle(image: image)
+                let result = try await GeminiService().analyzeBottle(image: image)
                 await MainActor.run {
                     analysisResult = result
                     isAnalyzing = false
+                    persistHistoryEntry(result: result, image: image)
                 }
             } catch {
                 await MainActor.run {
                     isAnalyzing = false
                     errorMessage = error.localizedDescription
-                    showingError = true
+                    if case GeminiError.invalidAPIKey = error {
+                        showingError = false
+                    } else {
+                        showingError = true
+                    }
                 }
             }
         }
     }
 
-    // MARK: - Save Bottle
+    // MARK: - Persistence
 
-    private func saveBottle() {
-        guard let result = analysisResult,
-              let image = capturedImage else {
-            return
-        }
-
+    private func persistHistoryEntry(result: BottleAnalysisResult, image: UIImage) {
         let imageData = ImageProcessor.prepareForStorage(image)
 
-        let bottle = BottleEntry(
-            name: result.name,
-            alcoholType: result.alcoholType,
-            tastingNotes: result.tastingNotes,
-            pairingNotes: result.pairingNotes,
-            priceRange: result.priceRange,
-            imageData: imageData,
-            inCollection: true
-        )
+        do {
+            if let bottle = persistedBottle {
+                bottle.name = result.name
+                bottle.alcoholType = result.alcoholType
+                bottle.tastingNotes = result.tastingNotes
+                bottle.pairingNotes = result.pairingNotes
+                bottle.priceRange = result.priceRange
+                bottle.imageData = imageData
+            } else {
+                let bottle = BottleEntry(
+                    name: result.name,
+                    alcoholType: result.alcoholType,
+                    tastingNotes: result.tastingNotes,
+                    pairingNotes: result.pairingNotes,
+                    priceRange: result.priceRange,
+                    imageData: imageData,
+                    inCollection: false
+                )
 
-        modelContext.insert(bottle)
-        dismiss()
+                modelContext.insert(bottle)
+                persistedBottle = bottle
+            }
+
+            try modelContext.save()
+        } catch {
+            errorMessage = "Unable to save this scan to history: \(error.localizedDescription)"
+            showingError = true
+        }
+    }
+
+    private func markBottleOwned() {
+        guard let result = analysisResult,
+              let image = capturedImage else { return }
+
+        do {
+            let bottle: BottleEntry
+            if let persistedBottle {
+                bottle = persistedBottle
+            } else {
+                let imageData = ImageProcessor.prepareForStorage(image)
+                let newBottle = BottleEntry(
+                    name: result.name,
+                    alcoholType: result.alcoholType,
+                    tastingNotes: result.tastingNotes,
+                    pairingNotes: result.pairingNotes,
+                    priceRange: result.priceRange,
+                    imageData: imageData,
+                    inCollection: false
+                )
+                modelContext.insert(newBottle)
+                persistedBottle = newBottle
+                bottle = newBottle
+            }
+
+            bottle.inCollection = true
+            try modelContext.save()
+            dismiss()
+        } catch {
+            errorMessage = "Unable to mark this bottle as owned: \(error.localizedDescription)"
+            showingError = true
+        }
     }
 }
 
