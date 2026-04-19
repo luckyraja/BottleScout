@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+import OSLog
+
+private let inventoryLog = Logger(subsystem: "com.bottlescout.app", category: "InventoryListView")
 
 struct InventoryListView: View {
     @Environment(\.modelContext) private var modelContext
@@ -22,6 +25,9 @@ struct InventoryListView: View {
             }
         }
         .navigationTitle("Inventory")
+        .onAppear {
+            inventoryLog.info("InventoryListView appeared. total=\(bottles.count) owned=\(ownedBottles.count) scanned=\(scannedBottles.count)")
+        }
     }
 
     private var emptyStateView: some View {

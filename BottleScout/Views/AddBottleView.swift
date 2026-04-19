@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+import OSLog
+
+private let addBottleLog = Logger(subsystem: "com.bottlescout.app", category: "AddBottleView")
 
 // MARK: - AddBottleView
 
@@ -50,11 +53,6 @@ struct AddBottleView: View {
         .background(Color.surface.ignoresSafeArea())
         .navigationTitle("Bottle Review")
         .navigationBarTitleDisplayMode(.inline)
-        .safeAreaInset(edge: .bottom) {
-            if analysisResult != nil && !isAnalyzing {
-                ownedCTA
-            }
-        }
         .sheet(isPresented: $showingImagePicker) {
             Group {
                 if imageSource == .camera {
@@ -232,6 +230,9 @@ struct AddBottleView: View {
             }
             .padding(.horizontal, 4)
             .padding(.top, 4)
+
+            ownedCTA
+                .padding(.top, 8)
         }
     }
 
@@ -300,6 +301,7 @@ struct AddBottleView: View {
         let alreadyOwned = persistedBottle?.inCollection == true
 
         return Button {
+            addBottleLog.info("Add to Collection tapped. persistedBottle=\(self.persistedBottle == nil ? "nil" : "set") alreadyOwned=\(alreadyOwned)")
             markBottleOwned()
         } label: {
             Label(alreadyOwned ? "In Your Collection" : "Add to Collection",
@@ -314,9 +316,6 @@ struct AddBottleView: View {
         .buttonStyle(.plain)
         .disabled(alreadyOwned)
         .opacity(alreadyOwned ? 0.7 : 1)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(.ultraThinMaterial)
     }
 
     // MARK: - Analyze Image
@@ -332,6 +331,7 @@ struct AddBottleView: View {
             do {
                 let result = try await GeminiService().analyzeBottle(image: image)
                 await MainActor.run {
+                    addBottleLog.info("analyzeImage: Gemini succeeded for '\(result.name)'")
                     analysisResult = result
                     isAnalyzing = false
                     persistHistoryEntry(result: result, image: image)
@@ -363,6 +363,7 @@ struct AddBottleView: View {
                 bottle.pairingNotes = result.pairingNotes
                 bottle.priceRange = result.priceRange
                 bottle.imageData = imageData
+                addBottleLog.info("persistHistoryEntry: updated existing bottle '\(bottle.name)'")
             } else {
                 let bottle = BottleEntry(
                     name: result.name,
@@ -376,25 +377,34 @@ struct AddBottleView: View {
 
                 modelContext.insert(bottle)
                 persistedBottle = bottle
+                addBottleLog.info("persistHistoryEntry: inserted new bottle '\(bottle.name)'")
             }
 
             try modelContext.save()
+            addBottleLog.info("persistHistoryEntry: modelContext saved successfully")
         } catch {
+            addBottleLog.error("persistHistoryEntry: save failed — \(error.localizedDescription)")
             errorMessage = "Unable to save this scan to history: \(error.localizedDescription)"
             showingError = true
         }
     }
 
     private func markBottleOwned() {
-        guard let result = analysisResult,
-              let image = capturedImage else { return }
+        addBottleLog.info("markBottleOwned: entered. analysisResult=\(self.analysisResult == nil ? "nil" : "set") capturedImage=\(self.capturedImage == nil ? "nil" : "set") persistedBottle=\(self.persistedBottle == nil ? "nil" : "set")")
+
+        guard let result = analysisResult else {
+            addBottleLog.error("markBottleOwned: aborting — analysisResult is nil")
+            errorMessage = "No analysis result available to save."
+            showingError = true
+            return
+        }
 
         do {
             let bottle: BottleEntry
             if let persistedBottle {
                 bottle = persistedBottle
             } else {
-                let imageData = ImageProcessor.prepareForStorage(image)
+                let imageData = capturedImage.flatMap { ImageProcessor.prepareForStorage($0) }
                 let newBottle = BottleEntry(
                     name: result.name,
                     alcoholType: result.alcoholType,
@@ -407,12 +417,15 @@ struct AddBottleView: View {
                 modelContext.insert(newBottle)
                 persistedBottle = newBottle
                 bottle = newBottle
+                addBottleLog.info("markBottleOwned: created fallback bottle '\(newBottle.name)'")
             }
 
             bottle.inCollection = true
             try modelContext.save()
+            addBottleLog.info("markBottleOwned: saved bottle '\(bottle.name)' as inCollection=true")
             dismiss()
         } catch {
+            addBottleLog.error("markBottleOwned: save failed — \(error.localizedDescription)")
             errorMessage = "Unable to mark this bottle as owned: \(error.localizedDescription)"
             showingError = true
         }
