@@ -313,7 +313,7 @@ struct AddBottleView: View {
                 .background(LinearGradient.primaryButtonGradient)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .disabled(alreadyOwned)
         .opacity(alreadyOwned ? 0.7 : 1)
     }

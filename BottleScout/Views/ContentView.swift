@@ -4,6 +4,7 @@ import UIKit
 struct ContentView: View {
     @StateObject private var liveCamera = LiveCameraModel()
     @State private var selectedImage: UIImage?
+    @State private var bottleReviewImage: UIImage?
     @State private var showingImagePicker = false
     @State private var showingSettings = false
     @State private var imageSource: ImageSource = .camera
@@ -48,9 +49,12 @@ struct ContentView: View {
                 InventoryListView()
             }
             .navigationDestination(isPresented: $showBottleReview) {
-                if let image = selectedImage {
+                if let image = bottleReviewImage {
                     AddBottleView(initialImage: image, initialImageSource: imageSource)
                 }
+            }
+            .onChange(of: showBottleReview) { _, shown in
+                if !shown { bottleReviewImage = nil }
             }
             .sheet(isPresented: $showingImagePicker) {
                 if imageSource == .camera {
@@ -63,7 +67,9 @@ struct ContentView: View {
                 SettingsView()
             }
             .onChange(of: selectedImage) { _, newValue in
-                if newValue != nil {
+                if let newValue {
+                    bottleReviewImage = newValue
+                    selectedImage = nil
                     showBottleReview = true
                 }
             }
