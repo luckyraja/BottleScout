@@ -25,9 +25,12 @@ struct AddBottleView: View {
     @State private var showingSettings = false
     @State private var persistedBottle: BottleEntry?
 
-    init(initialImage: UIImage? = nil, initialImageSource: ImageSource = .camera) {
+    var onDismiss: (() -> Void)? = nil
+
+    init(initialImage: UIImage? = nil, initialImageSource: ImageSource = .camera, onDismiss: (() -> Void)? = nil) {
         _capturedImage = State(initialValue: initialImage)
         _imageSource = State(initialValue: initialImageSource)
+        self.onDismiss = onDismiss
     }
 
     var body: some View {
@@ -300,22 +303,21 @@ struct AddBottleView: View {
     private var ownedCTA: some View {
         let alreadyOwned = persistedBottle?.inCollection == true
 
-        return Button {
-            addBottleLog.info("Add to Collection tapped. persistedBottle=\(self.persistedBottle == nil ? "nil" : "set") alreadyOwned=\(alreadyOwned)")
-            markBottleOwned()
-        } label: {
-            Label(alreadyOwned ? "In Your Collection" : "Add to Collection",
-                  systemImage: alreadyOwned ? "checkmark.circle.fill" : "plus.circle.fill")
-                .font(.headline.weight(.semibold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 52)
-                .background(LinearGradient.primaryButtonGradient)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        }
-        .buttonStyle(.borderless)
-        .disabled(alreadyOwned)
-        .opacity(alreadyOwned ? 0.7 : 1)
+        return Label(alreadyOwned ? "In Your Collection" : "Add to Collection",
+                     systemImage: alreadyOwned ? "checkmark.circle.fill" : "plus.circle.fill")
+            .font(.headline.weight(.semibold))
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 52)
+            .background(LinearGradient.primaryButtonGradient)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .opacity(alreadyOwned ? 0.7 : 1)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                guard !alreadyOwned else { return }
+                addBottleLog.info("Add to Collection tapped. persistedBottle=\(self.persistedBottle == nil ? "nil" : "set") alreadyOwned=\(alreadyOwned)")
+                markBottleOwned()
+            }
     }
 
     // MARK: - Analyze Image
@@ -423,7 +425,7 @@ struct AddBottleView: View {
             bottle.inCollection = true
             try modelContext.save()
             addBottleLog.info("markBottleOwned: saved bottle '\(bottle.name)' as inCollection=true")
-            dismiss()
+            if let onDismiss { onDismiss() } else { dismiss() }
         } catch {
             addBottleLog.error("markBottleOwned: save failed — \(error.localizedDescription)")
             errorMessage = "Unable to mark this bottle as owned: \(error.localizedDescription)"

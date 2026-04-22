@@ -50,11 +50,11 @@ struct ContentView: View {
             }
             .navigationDestination(isPresented: $showBottleReview) {
                 if let image = bottleReviewImage {
-                    AddBottleView(initialImage: image, initialImageSource: imageSource)
+                    AddBottleView(initialImage: image, initialImageSource: imageSource) {
+                        showBottleReview = false
+                        bottleReviewImage = nil
+                    }
                 }
-            }
-            .onChange(of: showBottleReview) { _, shown in
-                if !shown { bottleReviewImage = nil }
             }
             .sheet(isPresented: $showingImagePicker) {
                 if imageSource == .camera {
