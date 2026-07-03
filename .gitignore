@@ -122,3 +122,6 @@ Temporary Items
 
 # Local build config
 Config.local.xcconfig
+
+# Local backups
+backups/
